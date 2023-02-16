@@ -1,6 +1,8 @@
 #include <iostream>
 #include <string>
 using namespace std;
+
+/*********************Enums*************************/
 enum enGame
 {
     Rock = 1,
@@ -14,11 +16,23 @@ enum enWinner
     Computer = 2,
     Equal = 3
 };
+/*********************Strucs**********************/
+struct stGameInfo
+{
+
+    short roundsNumbers;
+    short playerResult = 0;
+    short computerResult = 0;
+    short drowResult = 0;
+    string finalWinner;
+    short roundCounter = 1;
+};
+
 // ask how many rounds
 short roundNumbers()
 {
     short roundNumbers;
-    cout << "How Many Rounds Do You Want From [1] to [10]: ";
+    cout << "How Many Rounds Do You Want From [1] to [10]:   ";
     cin >> roundNumbers;
     return roundNumbers;
 }
@@ -36,7 +50,7 @@ void roundBeginSeperator(short roundCounter)
 enGame playerChoice()
 {
     short playerChoice;
-    cout << "Please Chose [1] Rock [2] Paper [3] Scissors";
+    cout << "Please Chose [1] Rock [2] Paper [3] Scissors:   ";
     cin >> playerChoice;
     return (enGame)playerChoice;
 }
@@ -88,56 +102,68 @@ void printComputerChoice(enGame choice)
 enWinner roundWinner(short playerChoice, short computerChoice)
 {
 
-    if (playerChoice == enGame::Paper)
-
-        if (computerChoice == enGame::Rock)
-            return enWinner::User;
-        else if (computerChoice == enGame::Scissors)
-            return enWinner::Computer;
-        else
-            return enWinner::Equal;
-
-    else if (playerChoice == enGame::Rock)
-
+    if (playerChoice == computerChoice)
+        return enWinner::Equal;
+    switch (playerChoice)
+    {
+    case enGame::Paper:
         if (computerChoice == enGame::Scissors)
-            return enWinner::User;
-        else if (computerChoice == enGame::Paper)
+        {
             return enWinner::Computer;
-        else
-            return enWinner::Equal;
-
-    else if (playerChoice == enGame::Scissors)
-
+        }
+        break;
+    case enGame::Rock:
         if (computerChoice == enGame::Paper)
-            return enWinner::User;
-        else if (computerChoice == enGame::Rock)
+        {
             return enWinner::Computer;
-        else
-            return enWinner::Equal;
-
-    return enWinner::NoChoice;
+        }
+        break;
+    case enGame::Scissors:
+        if (computerChoice == enGame::Rock)
+        {
+            return enWinner::Computer;
+        }
+        break;
+    }
+    return enWinner::User;
 }
 void printRoundWinner(enWinner roundWinner)
 {
     if (roundWinner == enWinner::User)
     {
         cout << "\n\t\tRond Winner is PLAYER\n";
-        system("Color 2A");
+        system("Color 2F");
     }
     else if (roundWinner == enWinner::Computer)
     {
         cout << "\n\t\tRound Winner is COMPUTER\n";
-        system("Color 4A");
+        system("Color 4F");
     }
     else if (roundWinner == enWinner::Equal)
     {
         cout << "\n\t\tNO Winner..\n";
-        system("Color 6A");
+        system("Color 6F");
     }
     else
     {
         cout << "\n\t\ttWrong Choice\n";
     }
+}
+stGameInfo finalWinner(stGameInfo winnerInfo)
+{
+    if (winnerInfo.playerResult > winnerInfo.computerResult)
+    {
+        winnerInfo.finalWinner = "Player";
+    }
+    else if (winnerInfo.computerResult > winnerInfo.playerResult)
+    {
+        winnerInfo.finalWinner = "Computer";
+    }
+    else
+    {
+        winnerInfo.finalWinner = "No Winner..";
+    }
+    return winnerInfo;
 }
 // End Seprator
 void endSeperator()
@@ -152,20 +178,28 @@ void resultSheetHeader()
     cout << "\t-------------------------------------------------------------------------\n";
     cout << "\t---------------------------[ GAME RESULT ]-------------------------------\n\n";
 }
-void printResulrSheet(short gamerounds, short playerResult, short computerResult, short drowResult, string finalWinner)
+void printResulrSheet(short gamerounds, short playerResult, short computerResult, short drowResult, stGameInfo finalWinner)
 {
     cout << "\t\t\tGame Rounds: " << gamerounds << endl;
     cout << "\t\t\tPlayer Won Times: " << playerResult << endl;
     cout << "\t\t\tComputer Won Times: " << computerResult << endl;
     cout << "\t\t\tDrow Times: " << drowResult << endl;
-    cout << "\t\t\tFinal Winner: " << finalWinner << endl;
+    cout << "\t\t\tFinal Winner: " << finalWinner.finalWinner << endl;
 }
 short PlayAgain()
 {
-    bool playAgain;
-    cout << "Do you Want To Play Again ? [1]-> yes | [0]-> No";
-    cin >> playAgain;
-    return playAgain;
+    short playAgain;
+    do
+    {
+        cout << "\nDo you Want To Play Again ? [1]-> yes | [0]-> No\n\n";
+        cin >> playAgain;
+        return playAgain;
+    } while (playAgain < 0 || playAgain > 1);
+}
+void resetScreen()
+{
+    system("cls");
+    system("color 0F");
 }
 // Start Game Function
 void startGame()
@@ -173,25 +207,21 @@ void startGame()
     bool playAgain = true;
     while (playAgain)
     {
-        short roundsNumbers = roundNumbers();
-        short playerResult = 0;
-        short computerResult = 0;
-        short drowResult = 0;
-        string finalWinner;
-        short roundCounter = 1;
+        resetScreen();
+        stGameInfo gameInfo;
+        gameInfo.roundsNumbers = roundNumbers();
 
         do
         {
-
-            if (roundCounter > 1)
+            if (gameInfo.roundCounter > 1)
             {
-                cout << "\t\tRound [" << roundCounter << "] Begins: \n\n";
+                cout << "\t\tRound [" << gameInfo.roundCounter << "] Begins: \n\n";
             }
 
             enGame PlayerChoice = playerChoice();
             enGame ComputerChoice = computerChoice();
 
-            roundBeginSeperator(roundCounter);
+            roundBeginSeperator(gameInfo.roundCounter);
 
             printPlayerChoice(PlayerChoice);
             printComputerChoice(ComputerChoice);
@@ -200,39 +230,27 @@ void startGame()
             endSeperator();
             if (roundWinner(PlayerChoice, ComputerChoice) == enWinner::User)
             {
-                playerResult++;
+                gameInfo.playerResult++;
             }
             else if (roundWinner(PlayerChoice, ComputerChoice) == enWinner::Computer)
             {
-                computerResult++;
+                cout << "\a";
+                gameInfo.computerResult++;
             }
             else
             {
-                drowResult++;
+                gameInfo.drowResult++;
             }
 
-            roundCounter++;
-        } while (roundCounter <= roundsNumbers);
-        if (playerResult > computerResult)
-        {
-            cout << "\t\tCongratolations To The Player.." << endl;
-            finalWinner = "Player";
-        }
-        else if (computerResult > playerResult)
-        {
-            cout << "\t\tCongratolations To The Computer.." << endl;
-            finalWinner = "Computer";
-        }
-        else
-        {
-            cout << "\t\tHard Luck To Each Of You You Are Equal..\n\n";
-            finalWinner = "No Winner";
-        }
+            gameInfo.roundCounter++;
+
+        } while (gameInfo.roundCounter <= gameInfo.roundsNumbers);
         resultSheetHeader();
-        printResulrSheet(roundsNumbers, playerResult, computerResult, drowResult, finalWinner);
+        printResulrSheet(gameInfo.roundsNumbers, gameInfo.playerResult, gameInfo.computerResult, gameInfo.drowResult, finalWinner(gameInfo));
         endSeperator();
         if (!PlayAgain())
             playAgain = false;
+        resetScreen();
     }
 }
 

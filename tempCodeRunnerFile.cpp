@@ -1,2 +1,1 @@
-short counter = roundNumbers();
-    roundBegin(counter);
+    NoChoice = 0,
