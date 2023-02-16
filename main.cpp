@@ -142,55 +142,97 @@ void printRoundWinner(enWinner roundWinner)
 // End Seprator
 void endSeperator()
 {
-    cout << "\n\t---------------------------------------------------\n"
+    cout << "\n\t---------------------------------------------------------------------\n"
          << endl;
+}
+void resultSheetHeader()
+{
+    cout << "\n\t-------------------------------------------------------------------------\n";
+    cout << "\t\t\t\t +++ GAME OVER +++\n";
+    cout << "\t-------------------------------------------------------------------------\n";
+    cout << "\t---------------------------[ GAME RESULT ]-------------------------------\n\n";
+}
+void printResulrSheet(short gamerounds, short playerResult, short computerResult, short drowResult, string finalWinner)
+{
+    cout << "\t\t\tGame Rounds: " << gamerounds << endl;
+    cout << "\t\t\tPlayer Won Times: " << playerResult << endl;
+    cout << "\t\t\tComputer Won Times: " << computerResult << endl;
+    cout << "\t\t\tDrow Times: " << drowResult << endl;
+    cout << "\t\t\tFinal Winner: " << finalWinner << endl;
+}
+short PlayAgain()
+{
+    bool playAgain;
+    cout << "Do you Want To Play Again ? [1]-> yes | [0]-> No";
+    cin >> playAgain;
+    return playAgain;
 }
 // Start Game Function
 void startGame()
 {
-    short roundsNumbers = roundNumbers();
-    short playerResult = 0;
-    short computerResult = 0;
-    short roundCounter = 1;
-    do
+    bool playAgain = true;
+    while (playAgain)
     {
-        if (roundCounter > 1)
+        short roundsNumbers = roundNumbers();
+        short playerResult = 0;
+        short computerResult = 0;
+        short drowResult = 0;
+        string finalWinner;
+        short roundCounter = 1;
+
+        do
         {
-            cout << "\t\tRound [" << roundCounter << "] Begins: \n\n";
+
+            if (roundCounter > 1)
+            {
+                cout << "\t\tRound [" << roundCounter << "] Begins: \n\n";
+            }
+
+            enGame PlayerChoice = playerChoice();
+            enGame ComputerChoice = computerChoice();
+
+            roundBeginSeperator(roundCounter);
+
+            printPlayerChoice(PlayerChoice);
+            printComputerChoice(ComputerChoice);
+            printRoundWinner(roundWinner(PlayerChoice, ComputerChoice));
+
+            endSeperator();
+            if (roundWinner(PlayerChoice, ComputerChoice) == enWinner::User)
+            {
+                playerResult++;
+            }
+            else if (roundWinner(PlayerChoice, ComputerChoice) == enWinner::Computer)
+            {
+                computerResult++;
+            }
+            else
+            {
+                drowResult++;
+            }
+
+            roundCounter++;
+        } while (roundCounter <= roundsNumbers);
+        if (playerResult > computerResult)
+        {
+            cout << "\t\tCongratolations To The Player.." << endl;
+            finalWinner = "Player";
         }
-
-        enGame PlayerChoice = playerChoice();
-        enGame ComputerChoice = computerChoice();
-
-        roundBeginSeperator(roundCounter);
-
-        printPlayerChoice(PlayerChoice);
-        printComputerChoice(ComputerChoice);
-        printRoundWinner(roundWinner(PlayerChoice, ComputerChoice));
-
+        else if (computerResult > playerResult)
+        {
+            cout << "\t\tCongratolations To The Computer.." << endl;
+            finalWinner = "Computer";
+        }
+        else
+        {
+            cout << "\t\tHard Luck To Each Of You You Are Equal..\n\n";
+            finalWinner = "No Winner";
+        }
+        resultSheetHeader();
+        printResulrSheet(roundsNumbers, playerResult, computerResult, drowResult, finalWinner);
         endSeperator();
-        if (roundWinner(PlayerChoice, ComputerChoice) == enWinner::User)
-        {
-            playerResult++;
-        }
-        else if (roundWinner(PlayerChoice, ComputerChoice) == enWinner::Computer)
-        {
-            computerResult++;
-        }
-
-        roundCounter++;
-    } while (roundCounter <= roundsNumbers);
-    if (playerResult > computerResult)
-    {
-        cout << "\t\tCongratolations To The Player.." << endl;
-    }
-    else if (computerResult > playerResult)
-    {
-        cout << "\t\tCongratolations To The Computer.." << endl;
-    }
-    else
-    {
-        cout << "\t\tHard Luck To Each Of You You Are Equal..\n\n";
+        if (!PlayAgain())
+            playAgain = false;
     }
 }
 
