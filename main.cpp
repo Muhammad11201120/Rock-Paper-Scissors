@@ -56,19 +56,8 @@ enGame playerChoice()
 }
 void printPlayerChoice(enGame choice)
 {
-    switch (choice)
-    {
-    case enGame::Paper:
-        cout << "\t\tYour Choice is => Paper" << endl;
-        break;
-    case enGame::Rock:
-        cout << "\t\tYour Choice is => Rock" << endl;
-        break;
-
-    default:
-        cout << "\t\tYour Choice is => Scissors" << endl;
-        break;
-    }
+    string choices[3] = {"Rock", "Paper", "Scissors"};
+    cout << "\t\tPlayer Choice is => " << choices[(short)choice - 1] << endl;
 }
 // computer choise
 int randNumber(int from, int to)
@@ -84,19 +73,9 @@ enGame computerChoice()
 }
 void printComputerChoice(enGame choice)
 {
-    switch (choice)
-    {
-    case enGame::Paper:
-        cout << "\t\tComputer Choice is => Paper" << endl;
-        break;
-    case enGame::Rock:
-        cout << "\t\tComputer Choice is => Rock" << endl;
-        break;
+    string choices[3] = {"Rock", "Paper", "Scissors"};
 
-    default:
-        cout << "\t\tcomputer Choice is => Scissors" << endl;
-        break;
-    }
+    cout << "\t\tComputer Choice is => " << choices[(short)choice - 1] << endl;
 }
 // round winner
 enWinner roundWinner(short playerChoice, short computerChoice)
